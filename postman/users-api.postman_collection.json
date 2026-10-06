@@ -1,0 +1,138 @@
+{
+  "info": {
+    "_postman_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+    "name": "Tokenizado Users API",
+    "description": "Colección completa para la API Tokenizado.\n\nVariables:\n- `baseUrl` → http://localhost:4000\n- `token` → se rellena automáticamente tras Login",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:4000"
+    },
+    {
+      "key": "token",
+      "value": ""
+    }
+  ],
+  "item": [
+    {
+      "name": "Health",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/health",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "health"]
+        },
+        "description": "Comprueba que la API está operativa."
+      },
+      "response": []
+    },
+    {
+      "name": "List Users",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/users",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "users"]
+        },
+        "description": "Devuelve los primeros 10 usuarios sin contraseñas."
+      },
+      "response": []
+    },
+    {
+      "name": "Register User",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Nuevo Usuario\",\n  \"email\": \"nuevo@example.com\",\n  \"password\": \"Password123!\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/users",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "users"]
+        },
+        "description": "Crea un usuario con contraseña hasheada (bcrypt)."
+      },
+      "response": []
+    },
+    {
+      "name": "Login",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Login OK', function () {",
+              "  pm.response.to.have.status(200);",
+              "  var json = pm.response.json();",
+              "  pm.expect(json.success).to.eql(true);",
+              "  pm.expect(json.data.token).to.be.a('string');",
+              "  pm.collectionVariables.set('token', json.data.token);",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"ana@demo.com\",\n  \"password\": \"Password123!\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/auth/login",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "auth", "login"]
+        },
+        "description": "Inicia sesión y guarda automáticamente el token en la variable de colección `token`."
+      },
+      "response": []
+    },
+    {
+      "name": "Update Name",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Ana García Actualizada\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/users/name",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "users", "name"]
+        },
+        "description": "Actualiza el nombre del usuario autenticado. Requiere Bearer token."
+      },
+      "response": []
+    }
+  ]
+}
